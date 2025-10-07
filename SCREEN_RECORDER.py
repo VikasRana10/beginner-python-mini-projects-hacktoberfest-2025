@@ -1,0 +1,58 @@
+//First Approach
+import datetime
+from PIL import ImageGrab                 
+import numpy as np                        
+import cv2                                
+from win32api import GetSystemMetrics     
+
+width = GetSystemMetrics(0)
+height = GetSystemMetrics(0)
+time_stamp = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')   
+file_name = f'{time_stamp}.mp4'
+
+fourcc = cv2.VideoWriter_fourcc('m','p','4','v')   
+captured_video = cv2.VideoWriter(file_name, fourcc, 20.0, (width, height))
+                                
+
+
+webcam = cv2.VideoCapture(0)   
+
+
+while True:                                                  
+    img = ImageGrab.grab(bbox=(0, 0, width, height))         
+    img_np = np.array(img)                                   
+    img_final = cv2.cvtColor(img_np, cv2.COLOR_BGR2RGB)      
+    _, frame = webcam.read()                                 
+    fr_height, fr_width, _ = frame.shape
+    img_final[0:fr_height, 0: fr_width, :] = frame[0: fr_height, 0: fr_width, :]
+    cv2.imshow('webcam', frame)
+
+    cv2.imshow('VRSCREEN', img_final)                        
+    captured_video.write(img_final)                          
+    if cv2.waitKey(10) == ord('q'):                          
+        break
+
+
+
+//Second Approach 
+from tkinter import Frame
+from turtle import screensize
+import cv2
+import numpy as np
+import pyautogui
+
+screen_size = (1920,1080)
+fourcc = cv2.VideoWriter_fourcc(*"XVID")
+out = cv2.VideoWriter("output.avi",fourcc,20.0,(screen_size))
+                    
+while True:
+    img = pyautogui.screenshot()
+    frame = np.array(img)
+
+    frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
+    out.write(frame)
+    cv2.imshow("Screen Recorder",frame)
+
+    if cv2.waitKey(1)==ord("q"):
+        break
+
